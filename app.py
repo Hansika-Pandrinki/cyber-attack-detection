@@ -1,19 +1,29 @@
 from flask import Flask, render_template, request
 import pickle
-import os
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 
-# Load model
-with open("model.pkl", "rb") as f:
-    model, le = pickle.load(f)
+# Load model safely
+try:
+    with open("model.pkl", "rb") as f:
+        model, le = pickle.load(f)
+except:
+    model = None
+    le = None
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+@app.route("/test")
+def test():
+    return "App is working!"
+
 @app.route("/predict", methods=["POST"])
 def predict():
+    if model is None:
+        return "Model not loaded"
+
     duration = int(request.form["duration"])
     protocol = request.form["protocol"]
     src_bytes = int(request.form["src_bytes"])
@@ -36,23 +46,9 @@ def predict():
 
     result = f"{status} | Confidence: {confidence}% | Risk: {risk} | Action: {action}"
 
-    with open("logs.txt", "a", encoding="utf-8") as f:
-        f.write(f"{duration}, {protocol}, {src_bytes} -> {status}\n")
-
     return render_template("index.html", result=result)
 
-@app.route("/logs")
-def logs():
-    try:
-        with open("logs.txt", "r", encoding="utf-8") as f:
-            data = f.readlines()
-        return "<br>".join(data)
-    except:
-        return "No logs yet!"
-
-@app.route("/test")
-def test():
-    return "App is working!"
+import os
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))

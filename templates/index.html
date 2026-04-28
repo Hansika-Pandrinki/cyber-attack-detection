@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cyber Security Dashboard</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #38bdf8;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: #1e293b;
+            width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            background: #22c55e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #facc15;
+        }
+
+        .logs {
+            margin-top: 20px;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🛡 Cyber Security Dashboard</h1>
+
+    <div class="card">
+        <form action="/predict" method="post">
+            <input type="number" name="duration" placeholder="Duration" required>
+
+            <select name="protocol">
+                <option value="tcp">TCP</option>
+                <option value="udp">UDP</option>
+                <option value="icmp">ICMP</option>
+            </select>
+
+            <input type="number" name="src_bytes" placeholder="Data Size" required>
+
+            <button type="submit">Analyze Traffic</button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                {{ result }}
+            </div>
+        {% endif %}
+
+        <div class="logs">
+            <a href="/logs" target="_blank">📄 View Logs</a>
+        </div>
+    </div>
+
+</body>
+</html>
